@@ -4,7 +4,7 @@
 # 实现环境
 * CPU：intel i7-12700F
 * GPU：nvidia-3060ti
-* system：windows11-家庭中文版
+* SYSTEM：windows11-家庭中文版
 
 # 使用方法
 * 需右键点击开始（win11的logo）随后以管理员身份打开PowerShell
