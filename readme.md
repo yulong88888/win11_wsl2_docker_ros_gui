@@ -43,6 +43,8 @@ sudo systemctl enable docker
 sudo docker pull osrf/ros:foxy-desktop
 # 启动镜像测试，注意--rm参数，退出后会自动删除容器
 sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name test osrf/ros:foxy-desktop
+# 如果删除--rm参数后，进入容器，由于官方镜像问题，所以需要每次都加载ros安装路径
+source /opt/ros/foxy/setup.bash
 
 # 如果需要gazebo仿真，可通过本项目的Dockerfile构建镜像
 cd ./win11_wsl2_docker_ros2_gui
@@ -50,6 +52,12 @@ sudo docker build -f Dockerfile -t ros2-foxy .
 
 # 启动镜像测试，注意--rm参数，退出后会自动删除容器
 sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name test ros2-foxy
+
+# 我采用的启动命令
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/spbatc/Desktop/ros_ws:/ros_ws --name ros2-foxy-container ros2-foxy
+
+# 进入容器
+sudo docker exec -it ros2-foxy-container bash
 ```
 
 # 其它命令
