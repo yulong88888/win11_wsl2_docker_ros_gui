@@ -54,7 +54,7 @@ sudo docker build -f Dockerfile -t ros2-foxy .
 sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name test ros2-foxy
 
 # 我采用的启动命令
-sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/spbatc/Desktop/ros_ws:/ros_ws --name ros2-foxy-container ros2-foxy
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/spbatc/Desktop/ros_ws:/root/ros_ws --name ros2-foxy-container ros2-foxy
 
 # 进入容器
 sudo docker exec -it ros2-foxy-container bash
