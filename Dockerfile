@@ -8,4 +8,6 @@ RUN apt-get install gazebo11 -y
 
 RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
 WORKDIR /root
