@@ -105,6 +105,26 @@ sudo docker rm ros-foxy
 sudo docker image prune
 ```
 
+## 使用硬件
+```shell
+# 如何通透到wsl
+# win系统安装
+winget install --interactive --exact dorssel.usbipd-win
+# 使用时候可能需要更新并关机
+wsl --update
+wsl --shutdown
+# wsl的linux安装
+sudo apt install linux-tools-5.4.0-77-generic hwdata
+sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/5.4.0-77-generic/usbip 20
+# win系统操作选择挂载设备
+usbipd wsl list
+usbipd wsl attach -b x-xx
+usbipd wsl detach -b x-xx
+
+# 挂载到wsl后，可自行使用docker参数挂载到ros容器上，network使用host后，can总线默认也可以挂上
+sudo docker run -d -it --network host --restart=always --name=test --privileged -v /home/nvidia/Desktop/ros_ws:/root/ros_ws --device /dev/ttyUSB0:/dev/ttyUSB0 osrf/ros:foxy-desktop-full
+```
+
 ## 其它命令
 ```shell
 # 查看wsl里安装的子系统
