@@ -2,8 +2,8 @@
 * 在win11上无侵入安装使用学习ros，含GUI与Gazebo
 
 # 实现环境
-* CPU：intel i7-12700F
-* GPU：nvidia-3060ti
+* CPU：intel i7-12700F and i7-10700F
+* GPU：nvidia-3060ti and nvidia-2060s
 * SYSTEM：windows11-家庭中文版
 
 # 使用方法
@@ -35,31 +35,71 @@ sh get-docker.sh
 rm get-docker.sh
 # 启动服务
 sudo service docker start
-# 开机启动
+# 开机启动【wsl里不怎么起作用】
 sudo systemctl enable docker
+```
 
-# 如果不使用gazebo仿真，可直接执行如下命令
-# 拉取镜像
+# ROS环境
+```shell
+# 拉取ros镜像【版本可选】
+sudo docker pull osrf/ros:melodic-desktop
 sudo docker pull osrf/ros:foxy-desktop
-# 启动镜像测试，注意--rm参数，退出后会自动删除容器
-sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name test osrf/ros:foxy-desktop
-# 如果删除--rm参数后，进入容器，由于官方镜像问题，所以需要每次都加载ros安装路径
+# 含gazebo仿真
+sudo docker pull osrf/ros:melodic-desktop-full
+sudo docker pull osrf/ros:foxy-desktop-full
+
+# 临时启动测试【注意自己的镜像版本，--rm参数，退出后会自动删除容器】
+sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name test osrf/ros:melodic-desktop-full
+sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name test osrf/ros:foxy-desktop-full
+
+# 官方镜像ros路径需要source
+source /opt/ros/melodic/setup.bash
 source /opt/ros/foxy/setup.bash
+# 偷懒方式
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 
-# 如果需要gazebo仿真，可通过本项目的Dockerfile构建镜像
-cd ./win11_wsl2_docker_ros2_gui
-sudo docker build -f Dockerfile -t ros2-foxy .
+# 常规启动【无挂载目录】
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name ros-melodic-container osrf/ros:melodic-desktop-full
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name ros-foxy-container osrf/ros:foxy-desktop-full
 
-# 启动镜像测试，注意--rm参数，退出后会自动删除容器
-sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name test ros2-foxy
+# 挂载目录启动【注意修改自己的路径】
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/GYL88/Desktop/ros_ws:/root/ros_ws --name ros-melodic-container osrf/ros:melodic-desktop-full
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/GYL88/Desktop/ros_ws:/root/ros_ws --name ros-foxy-container osrf/ros:foxy-desktop-full
 
-# 我采用的启动命令
-sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/spbatc/Desktop/ros_ws:/root/ros_ws --name ros2-foxy-container ros2-foxy
+# 查看容器状态
+sudo docker ps -a
 
-sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/GYL88/Desktop/ros2_ws:/root/ros2_ws --name ros2-foxy-container ros2-foxy
+# 停止并删除容器
+sudo docker stop ros-melodic-container && sudo docker rm ros-melodic-container
+sudo docker stop ros-foxy-container && sudo docker rm ros-foxy-container
 
 # 进入容器
-sudo docker exec -it ros2-foxy-container bash
+sudo docker exec -it ros-melodic-container bash
+sudo docker exec -it ros-foxy-container bash
+```
+
+# 自定义镜像【这里提供了阿里云软件源，其它的需求可以照葫芦画瓢】
+```shell
+# 进入目录【wsl默认挂载了win的磁盘，例如桌面路径为/mnt/c/Users/GYL88/Desktop】
+cd ./win11_wsl2_docker_ros_gui
+# 创建镜像【后面的点也要】
+sudo docker build -f Dockerfile.melodic -t ros-melodic .
+sudo docker build -f Dockerfile.foxy -t ros-foxy .
+
+# 启动命令和上方的类似、将尾缀的镜像名换一下即可
+osrf/ros:melodic-desktop-full -> ros-melodic
+osrf/ros:foxy-desktop-full -> ros-foxy
+
+# 查看镜像
+sudo docker images
+
+# 删除镜像
+sudo docker rm ros-melodic
+sudo docker rm ros-foxy
+
+# 虚悬镜像
+sudo docker image prune
 ```
 
 # 其它命令
