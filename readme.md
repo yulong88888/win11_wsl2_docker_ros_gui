@@ -1,12 +1,15 @@
-# 作用
+## 作用
 * 在win11上无侵入安装使用学习ros，含GUI与Gazebo
 
-# 实现环境
+## 官方镜像
+* [https://hub.docker.com/r/osrf/ros](https://hub.docker.com/r/osrf/ros)
+
+## 实现环境
 * CPU：intel i7-12700F and i7-10700F
 * GPU：nvidia-3060ti and nvidia-2060s
 * SYSTEM：windows11-家庭中文版
 
-# 使用方法
+## 使用方法
 * 需右键点击开始（win11的logo）随后以管理员身份打开PowerShell
 ```shell
 # 安装Ubuntu默认为20.04
@@ -39,7 +42,7 @@ sudo service docker start
 sudo systemctl enable docker
 ```
 
-# ROS环境
+## ROS环境
 ```shell
 # 拉取ros镜像【版本可选】
 sudo docker pull osrf/ros:melodic-desktop
@@ -79,7 +82,7 @@ sudo docker exec -it ros-melodic-container bash
 sudo docker exec -it ros-foxy-container bash
 ```
 
-# 自定义镜像【这里提供了阿里云软件源，其它的需求可以照葫芦画瓢】
+## 自定义镜像【这里提供了阿里云软件源，其它的需求可以照葫芦画瓢】
 ```shell
 # 进入目录【wsl默认挂载了win的磁盘，例如桌面路径为/mnt/c/Users/GYL88/Desktop】
 cd ./win11_wsl2_docker_ros_gui
@@ -102,7 +105,7 @@ sudo docker rm ros-foxy
 sudo docker image prune
 ```
 
-# 其它命令
+## 其它命令
 ```shell
 # 查看wsl里安装的子系统
 wsl -l
