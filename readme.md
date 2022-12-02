@@ -91,7 +91,7 @@ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.li
 sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
 # 制作foxy镜像
 sudo docker build -f Dockerfile.foxy -t ros-foxy .
-# 使用GPU，进入容器后，可以正常使用'nvidia-smi'命令，不过gazebo好像不太行
+# 使用GPU，进入容器后，可以正常使用'nvidia-smi'命令，Gazebo11不太行，GazeboGarden可以
 sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --gpus all --name test ros-foxy
 ```
 

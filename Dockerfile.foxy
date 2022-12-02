@@ -4,7 +4,19 @@ COPY ./sources.list /etc/apt/sources.list
 
 RUN apt-get update
 
-RUN apt-get install gazebo11 -y
+# Gazebo11
+# RUN apt-get install gazebo11 -y
+
+# GazeboGarden https://gazebosim.org/docs/garden/install_ubuntu
+RUN apt-get install lsb-release wget gnupg -y
+RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+RUN apt-get update
+RUN apt-get install gz-garden -y
+# 为gazebo安装并切换OpenGL-3.3
+RUN apt-get install mesa-utils -y
+RUN echo "export MESA_GL_VERSION_OVERRIDE=3.3" >> ~/.bashrc
+RUN echo "unset LIBGL_ALWAYS_INDIRECT" >> ~/.bashrc
 
 RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 
