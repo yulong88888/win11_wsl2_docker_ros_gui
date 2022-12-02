@@ -17,6 +17,8 @@ RUN apt-get install gz-garden -y
 RUN apt-get install mesa-utils -y
 RUN echo "export MESA_GL_VERSION_OVERRIDE=3.3" >> ~/.bashrc
 RUN echo "unset LIBGL_ALWAYS_INDIRECT" >> ~/.bashrc
+# 安装gazebosim桥，ros2下的版本名称不统一，详见官方地址：https://github.com/gazebosim/ros_gz
+RUN apt-get install ros-foxy-ros-ign
 
 RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 
