@@ -3,6 +3,7 @@ FROM osrf/ros:melodic-desktop-full
 COPY ./sources.list /etc/apt/sources.list
 
 RUN apt-get update
+RUN apt-get upgrade
 
 RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 
