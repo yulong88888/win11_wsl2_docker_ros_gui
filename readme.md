@@ -47,7 +47,8 @@ sudo systemctl enable docker
 # 拉取ros镜像【版本可选】
 sudo docker pull osrf/ros:melodic-desktop
 sudo docker pull osrf/ros:foxy-desktop
-# ！！！melodic-desktop-full含gazebo仿真、foxy-desktop下须自行安装！！！
+sudo docker pull osrf/ros:galactic-desktop
+# ！！！melodic-desktop-full含gazebo仿真、ros2下须自行安装！！！
 sudo docker pull osrf/ros:melodic-desktop-full
 
 # 临时启动测试【注意自己的镜像版本，--rm参数，退出后会自动删除容器】
@@ -57,17 +58,20 @@ sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.
 # 官方镜像ros路径需要source
 source /opt/ros/melodic/setup.bash
 source /opt/ros/foxy/setup.bash
+source /opt/ros/galactic/setup.bash
 # 偷懒方式
 echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+echo "source /opt/ros/galactic/setup.bash" >> ~/.bashrc
 
 # 常规启动【无挂载目录】
 sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name ros-melodic-container osrf/ros:melodic-desktop-full
 sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name ros-foxy-container osrf/ros:foxy-desktop
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name ros-galactic-container osrf/ros:galactic-desktop
 
 # 挂载目录启动【注意修改自己的路径】
-sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/GYL88/Desktop/ros_ws:/root/ros_ws --name ros-melodic-container osrf/ros:melodic-desktop-full
-sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/GYL88/Desktop/ros_ws:/root/ros_ws --name ros-foxy-container osrf/ros:foxy-desktop
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/root/ros_ws --name ros-melodic-container osrf/ros:melodic-desktop-full
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/root/ros_ws --name ros-foxy-container osrf/ros:foxy-desktop
 
 # 查看容器状态
 sudo docker ps -a
@@ -82,7 +86,7 @@ sudo docker exec -it ros-foxy-container bash
 ```
 
 ## DockerGPU
-```
+```shell
 # 添加源
 distribution=$(. /etc/os-release; echo $ID$VERSION_ID)
 curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
@@ -94,7 +98,7 @@ sudo docker build -f Dockerfile.foxy -t ros-foxy .
 # 使用GPU，进入容器后，可以正常使用'nvidia-smi'命令，Gazebo11不太行，GazeboGarden可以
 sudo docker run -it --rm --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --gpus all --name test ros-foxy
 # 完整命令
-sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/c/Users/GYL88/Desktop/ros_ws:/root/ros_ws --gpus all --name ros-foxy-container ros-foxy
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/root/ros_ws --gpus all --name ros-foxy-container ros-foxy
 ```
 
 ## 自定义镜像【这里提供了阿里云软件源，其它的需求可以照葫芦画瓢】
@@ -149,4 +153,16 @@ wsl -l
 wslconfig /u Ubuntu
 # 重启子系统
 wsl -t Ubuntu
+```
+
+## Ubuntu系统下的问题总结
+* 仅在Ubuntu22.10上测试，测试系统无显卡
+```shell
+# Docker容器无法连接显示器
+xhost +local:docker
+
+# OpenGL报错加上这个配置
+# --device /dev/dri
+# 例如
+sudo docker run -it -d --net host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/root/ros_ws --device /dev/dri --name ros-galactic osrf/ros:galactic-desktop
 ```
